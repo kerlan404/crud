@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Access Control
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../auth/login.php');
     exit;
@@ -14,35 +13,30 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $error_msg = '';
 
-// Handle CRUD submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
-    
+
     if ($action === 'create') {
         $nama_brand = trim($_POST['nama_brand']);
         if (!empty($nama_brand)) {
             try {
-                $stmt = $pdo->prepare("INSERT INTO brand (nama_brand) VALUES (?)");
-                $stmt->execute([$nama_brand]);
+                $pdo->prepare("INSERT INTO brand (nama_brand) VALUES (?)")->execute([$nama_brand]);
                 set_toast('success', 'Brand baru berhasil ditambahkan.');
-                header('Location: brand.php');
-                exit;
+                header('Location: brand.php'); exit;
             } catch (PDOException $e) {
-                $error_msg = 'Gagal menambah brand (Mungkin nama sudah terdaftar).';
+                $error_msg = 'Gagal menambah brand. Mungkin nama sudah terdaftar.';
             }
         }
     }
-    
+
     if ($action === 'update') {
         $id = (int)$_POST['id'];
         $nama_brand = trim($_POST['nama_brand']);
         if ($id > 0 && !empty($nama_brand)) {
             try {
-                $stmt = $pdo->prepare("UPDATE brand SET nama_brand = ? WHERE id = ?");
-                $stmt->execute([$nama_brand, $id]);
+                $pdo->prepare("UPDATE brand SET nama_brand = ? WHERE id = ?")->execute([$nama_brand, $id]);
                 set_toast('success', 'Brand berhasil diperbarui.');
-                header('Location: brand.php');
-                exit;
+                header('Location: brand.php'); exit;
             } catch (PDOException $e) {
                 $error_msg = 'Gagal memperbarui brand.';
             }
@@ -53,11 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = (int)$_POST['id'];
         if ($id > 0) {
             try {
-                $stmt = $pdo->prepare("DELETE FROM brand WHERE id = ?");
-                $stmt->execute([$id]);
+                $pdo->prepare("DELETE FROM brand WHERE id = ?")->execute([$id]);
                 set_toast('success', 'Brand berhasil dihapus.');
-                header('Location: brand.php');
-                exit;
+                header('Location: brand.php'); exit;
             } catch (PDOException $e) {
                 $error_msg = 'Gagal menghapus brand. Brand ini sedang digunakan oleh produk aktif.';
             }
@@ -65,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch all brands
 $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -75,25 +66,9 @@ $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Brand | ZETA Motors</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: {
-                            50: '#f0f4f8',
-                            500: '#003087',
-                            900: '#0b1b3d',
-                        },
-                        zeta: {
-                            500: '#CC0000',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <script>tailwind.config={theme:{extend:{colors:{navy:{50:'#f0f4f8',500:'#003087',900:'#0b1b3d'},zeta:{500:'#CC0000'}}}}}</script>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex">
 
@@ -122,22 +97,19 @@ $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
                 <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider border-b border-slate-100 pb-3" id="form-title">
                     Tambah Brand Baru
                 </h3>
-                
                 <form action="brand.php" method="POST" class="space-y-4" id="brand-form">
                     <input type="hidden" name="action" id="form-action" value="create">
                     <input type="hidden" name="id" id="brand-id" value="">
-                    
                     <div>
-                        <label for="nama_brand" class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Nama Brand</label>
+                        <label class="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Nama Brand</label>
                         <input type="text" name="nama_brand" id="nama_brand" required placeholder="Contoh: Yamaha"
                             class="w-full px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-navy-500 focus:border-navy-500 bg-white">
                     </div>
-
                     <div class="flex gap-2 pt-2">
-                        <button type="submit" class="flex-grow py-2 bg-navy-500 hover:bg-navy-600 text-white font-bold text-xs tracking-wider uppercase rounded transition btn-premium">
+                        <button type="submit" class="flex-grow py-2 bg-navy-500 hover:bg-navy-600 text-white font-bold text-xs tracking-wider uppercase rounded transition btn-premium cursor-pointer">
                             SIMPAN BRAND
                         </button>
-                        <button type="button" id="btn-cancel" onclick="resetForm()" class="hidden px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs tracking-wider uppercase rounded transition">
+                        <button type="button" id="btn-cancel" onclick="resetForm()" class="hidden px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs tracking-wider uppercase rounded transition cursor-pointer">
                             BATAL
                         </button>
                     </div>
@@ -159,9 +131,7 @@ $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         <?php if (empty($brands)): ?>
-                            <tr>
-                                <td colspan="3" class="p-4 text-center text-slate-400">Belum ada data brand.</td>
-                            </tr>
+                            <tr><td colspan="3" class="p-4 text-center text-slate-400">Belum ada data brand.</td></tr>
                         <?php else: ?>
                             <?php foreach ($brands as $brand): ?>
                                 <tr class="hover:bg-slate-50/50 transition">
@@ -169,13 +139,15 @@ $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
                                     <td class="p-4 font-semibold text-slate-800 text-sm"><?= htmlspecialchars($brand['nama_brand']) ?></td>
                                     <td class="p-4 text-right flex justify-end gap-2">
                                         <button onclick="editBrand(<?= $brand['id'] ?>, '<?= htmlspecialchars($brand['nama_brand'], ENT_QUOTES) ?>')"
-                                            class="px-2.5 py-1 bg-slate-100 hover:bg-navy-500 hover:text-white rounded text-[10px] font-bold tracking-wider uppercase transition">
+                                            class="px-2.5 py-1 bg-slate-100 hover:bg-navy-500 hover:text-white rounded text-[10px] font-bold tracking-wider uppercase transition cursor-pointer">
                                             EDIT
                                         </button>
-                                        <form action="brand.php" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus brand ini?');" class="inline">
+                                        <form id="del-brand-<?= $brand['id'] ?>" action="brand.php" method="POST" class="inline">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="id" value="<?= $brand['id'] ?>">
-                                            <button type="submit" class="px-2.5 py-1 bg-slate-100 hover:bg-rose-600 hover:text-white rounded text-[10px] font-bold tracking-wider uppercase transition">
+                                            <button type="button"
+                                                onclick="confirmDeleteBrand(<?= $brand['id'] ?>, '<?= htmlspecialchars($brand['nama_brand'], ENT_QUOTES) ?>')"
+                                                class="px-2.5 py-1 bg-slate-100 hover:bg-rose-600 hover:text-white rounded text-[10px] font-bold tracking-wider uppercase transition cursor-pointer">
                                                 HAPUS
                                             </button>
                                         </form>
@@ -189,6 +161,7 @@ $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function editBrand(id, name) {
             document.getElementById('form-title').textContent = 'Edit Brand';
@@ -196,6 +169,7 @@ $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
             document.getElementById('brand-id').value = id;
             document.getElementById('nama_brand').value = name;
             document.getElementById('btn-cancel').classList.remove('hidden');
+            document.getElementById('nama_brand').focus();
         }
 
         function resetForm() {
@@ -204,6 +178,22 @@ $brands = $pdo->query("SELECT * FROM brand ORDER BY id DESC")->fetchAll();
             document.getElementById('brand-id').value = '';
             document.getElementById('nama_brand').value = '';
             document.getElementById('btn-cancel').classList.add('hidden');
+        }
+
+        function confirmDeleteBrand(id, name) {
+            Swal.fire({
+                title: 'Hapus Brand?',
+                html: `Brand <strong style="color:#CC0000">${name}</strong> akan dihapus permanen.<br><small style="color:#94a3b8">Tidak bisa dihapus jika masih digunakan produk.</small>`,
+                icon: 'warning',
+                iconColor: '#CC0000',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#CC0000',
+                cancelButtonColor: '#64748b',
+                reverseButtons: true,
+                customClass: { popup: 'swal-zeta-popup', title: 'swal-zeta-title', confirmButton: 'swal-zeta-confirm', cancelButton: 'swal-zeta-cancel' }
+            }).then(r => { if (r.isConfirmed) document.getElementById('del-brand-' + id).submit(); });
         }
     </script>
 </body>

@@ -30,7 +30,7 @@ $orders = $stmt->fetchAll();
         <?php if (empty($orders)): ?>
             <!-- Empty State -->
             <div class="text-center py-20 bg-white rounded-lg border border-slate-200 max-w-lg mx-auto shadow-sm">
-                <span class="text-5xl block mb-4">🛒</span>
+                <svg class="w-14 h-14 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
                 <h3 class="text-lg font-bold text-slate-800">Belum Ada Transaksi</h3>
                 <p class="text-slate-500 text-sm mt-1">Anda belum melakukan pembelian motor apa pun saat ini.</p>
                 <a href="../index.php" class="mt-6 inline-block py-2.5 px-5 bg-navy-500 hover:bg-navy-600 text-white font-bold text-xs tracking-wider uppercase rounded transition btn-premium shadow">
@@ -110,11 +110,18 @@ $orders = $stmt->fetchAll();
                                     </td>
                                     <td class="p-4 text-center whitespace-nowrap">
                                         <?php if ($status === 'pending'): ?>
-                                            <a href="beli.php?order_id=<?= $order['id_pembelian'] ?>" class="inline-block px-3 py-1.5 bg-zeta-500 hover:bg-zeta-600 text-white rounded text-xs font-bold tracking-wider uppercase transition shadow-sm hover:shadow btn-premium">
-                                                Instruksi Bayar
-                                            </a>
+                                            <div class="flex items-center justify-center gap-2">
+                                                <a href="beli.php?order_id=<?= $order['id_pembelian'] ?>" class="inline-block px-3 py-1.5 bg-zeta-500 hover:bg-zeta-600 text-white rounded text-xs font-bold tracking-wider uppercase transition shadow-sm hover:shadow btn-premium">
+                                                    Bayar
+                                                </a>
+                                                <a href="detail_pesanan.php?id=<?= $order['id_pembelian'] ?>" class="inline-block px-3 py-1.5 bg-slate-100 hover:bg-navy-500 hover:text-white border border-slate-200 text-slate-700 rounded text-xs font-bold tracking-wider uppercase transition">
+                                                    Detail
+                                                </a>
+                                            </div>
                                         <?php else: ?>
-                                            <span class="text-xs text-slate-400">-</span>
+                                            <a href="detail_pesanan.php?id=<?= $order['id_pembelian'] ?>" class="inline-block px-3 py-1.5 bg-slate-100 hover:bg-navy-500 hover:text-white border border-slate-200 text-slate-700 rounded text-xs font-bold tracking-wider uppercase transition">
+                                                Detail
+                                            </a>
                                         <?php endif; ?>
                                     </td>
                                 </tr>

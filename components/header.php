@@ -42,6 +42,38 @@ require_once $base_url . 'components/toast.php';
         }
     </script>
     <link rel="stylesheet" href="<?= $base_url ?>assets/css/style.css">
+    <!-- SweetAlert2 Global -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        /* ── ZETA SweetAlert2 Theme ── */
+        .swal-zeta-popup {
+            border-radius: 14px !important;
+            font-family: 'Inter', sans-serif !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 25px 60px rgba(0,0,0,.15) !important;
+        }
+        .swal-zeta-title {
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 900 !important;
+            font-size: 1.2rem !important;
+            letter-spacing: .05em !important;
+            text-transform: uppercase !important;
+        }
+        .swal-zeta-html { font-size: .85rem !important; line-height: 1.8 !important; }
+        .swal-zeta-confirm, .swal-zeta-cancel {
+            font-family: 'Outfit', sans-serif !important;
+            font-weight: 700 !important;
+            letter-spacing: .08em !important;
+            text-transform: uppercase !important;
+            font-size: .72rem !important;
+            border-radius: 8px !important;
+            padding: 10px 22px !important;
+        }
+        .swal-zeta-confirm:focus, .swal-zeta-cancel:focus { box-shadow: none !important; }
+        /* Toast override */
+        .swal2-toast .swal2-title { font-size: .85rem !important; font-weight: 700 !important; }
+    </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col">
 
@@ -73,6 +105,7 @@ require_once $base_url . 'components/toast.php';
                             <a href="<?= $base_url ?>admin/dashboard.php" class="px-4 py-2 bg-navy-500 hover:bg-navy-600 rounded text-xs font-bold tracking-wider transition duration-200">DASHBOARD ADMIN</a>
                         <?php else: ?>
                             <a href="<?= $base_url ?>user/riwayat.php" class="px-4 py-2 bg-navy-500 hover:bg-navy-600 rounded text-xs font-bold tracking-wider transition duration-200">PESANAN SAYA</a>
+                            <a href="<?= $base_url ?>user/profil.php" class="px-3 py-2 bg-transparent hover:bg-white/10 text-slate-300 hover:text-white border border-white/20 rounded text-xs font-bold transition duration-200">PROFIL</a>
                         <?php endif; ?>
 
                         <a href="<?= $base_url ?>auth/logout.php" class="px-3 py-2 bg-transparent hover:bg-white/10 text-slate-300 hover:text-white border border-white/20 rounded text-xs font-bold transition duration-200">LOGOUT</a>

@@ -133,7 +133,7 @@ $products = $stmt->fetchAll();
         <?php if (empty($products)): ?>
             <!-- Empty State -->
             <div class="text-center py-20 bg-white rounded-lg border border-dashed border-slate-300 max-w-lg mx-auto">
-                <span class="text-5xl block mb-4">🏍️</span>
+                <svg class="w-14 h-14 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 <h3 class="text-lg font-bold text-slate-800">Motor Tidak Ditemukan</h3>
                 <p class="text-slate-500 text-sm mt-1">Kami tidak menemukan motor yang sesuai dengan kriteria filter Anda.</p>
                 <a href="index.php#katalog" class="mt-4 inline-block text-xs font-bold text-navy-500 hover:underline">Tampilkan semua produk</a>

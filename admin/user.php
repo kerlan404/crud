@@ -6,7 +6,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Access Control
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../auth/login.php');
     exit;
@@ -14,10 +13,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 
 $error_msg = '';
 
-// Handle Ban/Unban requests
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $target_id = (int)$_POST['user_id'];
-    $action = $_POST['action'] ?? '';
+    $action    = $_POST['action'] ?? '';
 
     if ($target_id > 0 && !empty($action)) {
         if ($target_id === (int)$_SESSION['user_id']) {
@@ -25,10 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             try {
                 $status = ($action === 'ban') ? 'banned' : 'active';
-                $stmt = $pdo->prepare("UPDATE users SET status = ? WHERE id = ?");
-                $stmt->execute([$status, $target_id]);
-                
-                $msg = ($action === 'ban') ? 'User berhasil diblokir / banned.' : 'Akses user berhasil dipulihkan.';
+                $pdo->prepare("UPDATE users SET status = ? WHERE id = ?")->execute([$status, $target_id]);
+                $msg = ($action === 'ban') ? 'User berhasil diblokir.' : 'Akses user berhasil dipulihkan.';
                 set_toast('success', $msg);
                 header('Location: user.php');
                 exit;
@@ -39,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Fetch all users
 $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id DESC")->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -49,25 +44,9 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id DESC")->fetchAll
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola User | ZETA Motors</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        navy: {
-                            50: '#f0f4f8',
-                            500: '#003087',
-                            900: '#0b1b3d',
-                        },
-                        zeta: {
-                            500: '#CC0000',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <script>tailwind.config={theme:{extend:{colors:{navy:{50:'#f0f4f8',500:'#003087',900:'#0b1b3d'},zeta:{500:'#CC0000'}}}}}</script>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex">
 
@@ -107,6 +86,12 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id DESC")->fetchAll
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-sm">
                         <?php foreach ($users as $user): ?>
+                            <!-- Hidden form for ban/unban -->
+                            <form id="form-user-<?= $user['id'] ?>" action="user.php" method="POST" style="display:none">
+                                <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                <input type="hidden" name="action" value="<?= $user['status'] === 'active' ? 'ban' : 'unban' ?>">
+                            </form>
+
                             <tr class="hover:bg-slate-50/50 transition">
                                 <td class="p-4 font-mono text-slate-500 font-semibold">#<?= $user['id'] ?></td>
                                 <td class="p-4 font-bold text-slate-900"><?= htmlspecialchars($user['username']) ?></td>
@@ -128,22 +113,19 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id DESC")->fetchAll
                                     <?php if ($user['id'] === (int)$_SESSION['user_id']): ?>
                                         <span class="text-xs text-slate-400 font-medium">Akun Anda</span>
                                     <?php else: ?>
-                                        <form action="user.php" method="POST" class="inline">
-                                            <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                            <?php if ($user['status'] === 'active'): ?>
-                                                <input type="hidden" name="action" value="ban">
-                                                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin mem-ban user ini?');"
-                                                    class="px-3 py-1 bg-rose-50 hover:bg-rose-600 hover:text-white border border-rose-200 text-rose-700 rounded text-xs font-bold transition">
-                                                    BAN USER
-                                                </button>
-                                            <?php else: ?>
-                                                <input type="hidden" name="action" value="unban">
-                                                <button type="submit" onclick="return confirm('Apakah Anda yakin ingin memulihkan user ini?');"
-                                                    class="px-3 py-1 bg-emerald-50 hover:bg-emerald-600 hover:text-white border border-emerald-200 text-emerald-700 rounded text-xs font-bold transition">
-                                                    UNBAN USER
-                                                </button>
-                                            <?php endif; ?>
-                                        </form>
+                                        <?php if ($user['status'] === 'active'): ?>
+                                            <button type="button"
+                                                onclick="confirmBan(<?= $user['id'] ?>, '<?= htmlspecialchars($user['username'], ENT_QUOTES) ?>')"
+                                                class="px-3 py-1 bg-rose-50 hover:bg-rose-600 hover:text-white border border-rose-200 text-rose-700 rounded text-xs font-bold transition cursor-pointer">
+                                                BAN USER
+                                            </button>
+                                        <?php else: ?>
+                                            <button type="button"
+                                                onclick="confirmUnban(<?= $user['id'] ?>, '<?= htmlspecialchars($user['username'], ENT_QUOTES) ?>')"
+                                                class="px-3 py-1 bg-emerald-50 hover:bg-emerald-600 hover:text-white border border-emerald-200 text-emerald-700 rounded text-xs font-bold transition cursor-pointer">
+                                                UNBAN USER
+                                            </button>
+                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -154,5 +136,39 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id DESC")->fetchAll
         </div>
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmBan(id, name) {
+            Swal.fire({
+                title: 'BAN USER?',
+                html: `User <strong style="color:#CC0000">${name}</strong> tidak akan bisa login setelah di-ban.<br><small style="color:#94a3b8">Anda dapat meng-unban kapan saja.</small>`,
+                icon: 'warning',
+                iconColor: '#CC0000',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Ban Sekarang',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#CC0000',
+                cancelButtonColor: '#64748b',
+                reverseButtons: true,
+                customClass: { popup: 'swal-zeta-popup', title: 'swal-zeta-title', confirmButton: 'swal-zeta-confirm', cancelButton: 'swal-zeta-cancel' }
+            }).then(r => { if (r.isConfirmed) document.getElementById('form-user-' + id).submit(); });
+        }
+
+        function confirmUnban(id, name) {
+            Swal.fire({
+                title: 'PULIHKAN USER?',
+                html: `User <strong style="color:#003087">${name}</strong> akan dapat login kembali.`,
+                icon: 'question',
+                iconColor: '#003087',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Pulihkan',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#003087',
+                cancelButtonColor: '#64748b',
+                reverseButtons: true,
+                customClass: { popup: 'swal-zeta-popup', title: 'swal-zeta-title', confirmButton: 'swal-zeta-confirm', cancelButton: 'swal-zeta-cancel' }
+            }).then(r => { if (r.isConfirmed) document.getElementById('form-user-' + id).submit(); });
+        }
+    </script>
 </body>
 </html>

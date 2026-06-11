@@ -44,6 +44,15 @@ CREATE TABLE IF NOT EXISTS `produk` (
   INDEX idx_kategori (`kategori_id`),
   INDEX idx_brand (`brand_id`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+-- Table login_attempts (brute force protection)
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `email` VARCHAR(255) NOT NULL,
+  `ip_address` VARCHAR(45) NOT NULL,
+  `attempted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_email_time (`email`, `attempted_at`)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
 -- Table pembelian
 CREATE TABLE IF NOT EXISTS `pembelian` (
   `id_pembelian` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

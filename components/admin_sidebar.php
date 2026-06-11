@@ -62,6 +62,9 @@ function is_active($page, $current) {
                 <p class="text-[10px] font-mono text-slate-400">ADMINISTRATOR</p>
             </div>
         </div>
+        <a href="profil.php" class="block w-full py-2 bg-slate-100 hover:bg-navy-500 hover:text-white text-slate-600 text-center font-bold text-xs rounded transition uppercase">
+            EDIT PROFIL
+        </a>
         <a href="../auth/logout.php" class="block w-full py-2 bg-slate-100 hover:bg-rose-50 hover:text-rose-700 text-slate-500 text-center font-bold text-xs rounded transition uppercase">
             KELUAR / LOGOUT
         </a>

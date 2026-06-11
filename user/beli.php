@@ -213,7 +213,7 @@ require_once '../components/header.php';
         <!-- Payment Instructions Page -->
         <div class="bg-white rounded-lg border border-slate-200 shadow-lg overflow-hidden">
             <div class="bg-emerald-600 p-6 text-white text-center">
-                <span class="text-4xl block mb-2">🎉</span>
+                <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 <h2 class="text-xl font-bold uppercase tracking-wide">Pemesanan Anda Berhasil Dibuat</h2>
                 <p class="text-xs text-emerald-100">Pesanan ID: #ZTA-<?= $order_details['id_pembelian'] ?> | Status: PENDING</p>
             </div>
