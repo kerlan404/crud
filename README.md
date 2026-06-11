@@ -1,119 +1,268 @@
-# CRUD Ujian Akhir Semester
+# 🛍️ CRUD Ujian Akhir Semester
 
-Dokumentasi singkat tentang struktur website, instalasi, cara menjalankan, dan penggunaan aplikasi.
+<div align="center">
 
-## 1. Gambaran Umum
+![IShowSpeed Yeah](https://media1.tenor.com/m/J9WzCvxHZEsAAAAd/ishowspeed-ishowspeed-yeah-right.gif)
 
-Website ini adalah aplikasi CRUD sederhana untuk toko online yang dilengkapi dengan:
-- Halaman depan produk
-- Detail produk
-- Autentikasi pengguna
-- Panel admin untuk manajemen produk, kategori, brand, transaksi, dan pengguna
-- Halaman profil dan riwayat pesanan untuk pengguna
+**Aplikasi CRUD Toko Online yang Sederhana dan Powerful** ✨
 
-## 2. Struktur Folder
+Dokumentasi lengkap tentang struktur website, instalasi, cara menjalankan, dan penggunaan aplikasi.
 
-- `index.php`
-  - Halaman depan website yang menampilkan daftar produk.
-- `detail.php`
-  - Halaman detail produk.
-- `db_init.php`
-  - File inisialisasi database / contoh script untuk setup data awal.
-- `database.sql`
-  - File SQL untuk membuat tabel dan data awal.
+</div>
 
-- `auth/`
-  - `login.php` - halaman login.
-  - `logout.php` - proses logout.
-  - `register.php` - halaman pendaftaran pengguna.
-  - `loading.php` - halaman loading/redirect setelah login.
+---
 
-- `admin/`
-  - `dashboard.php` - dashboard admin.
-  - `produk.php` - halaman manajemen produk.
-  - `kategori.php` - manajemen kategori.
-  - `brand.php` - manajemen brand.
-  - `transaksi.php` - manajemen transaksi.
-  - `user.php` - manajemen pengguna.
-  - `profil.php` - profil admin.
+## 📋 Daftar Isi
 
-- `components/`
-  - `header.php` - header umum.
-  - `footer.php` - footer umum.
-  - `admin_sidebar.php` - sidebar untuk halaman admin.
-  - `toast.php` - tampilan notifikasi toast.
+- [🎯 Gambaran Umum](#-gambaran-umum)
+- [📁 Struktur Folder](#-struktur-folder)
+- [⚙️ Persyaratan](#️-persyaratan)
+- [🗄️ Setup Database](#️-setup-database)
+- [🚀 Menjalankan Website](#-menjalankan-website)
+- [💡 Cara Menggunakan](#-cara-menggunakan)
+- [📝 Catatan Tambahan](#-catatan-tambahan)
 
-- `config/`
-  - `db.php` - konfigurasi koneksi database.
+---
 
-- `assets/`
-  - `css/style.css` - file stylesheet.
-  - `js/app.js` - file JavaScript untuk interaksi frontend.
+## 🎯 Gambaran Umum
 
-- `uploads/`
-  - `produk/` - folder untuk menyimpan gambar produk.
+Website ini adalah aplikasi CRUD yang powerful untuk toko online dengan fitur lengkap:
 
-- `user/`
-  - `profil.php` - halaman profil pengguna.
-  - `detail_pesanan.php` - detail pesanan pengguna.
-  - `riwayat.php` - riwayat pembelian.
-  - `beli.php` - halaman proses pembelian.
+| Fitur | Deskripsi |
+|-------|-----------|
+| 🏠 **Halaman Depan** | Menampilkan daftar produk dengan pagination |
+| 🔍 **Detail Produk** | Informasi lengkap produk dengan gambar |
+| 🔐 **Autentikasi** | Sistem login & register yang aman |
+| 👨‍💼 **Admin Panel** | Manajemen lengkap untuk admin |
+| 👤 **Profil Pengguna** | Profil & riwayat pesanan pengguna |
 
-## 3. Persyaratan
+---
 
-Sebelum menjalankan aplikasi, pastikan Anda memiliki:
-- PHP (versi 7.4+ atau lebih baru)
-- Web server lokal atau built-in server PHP
-- Database MySQL/MariaDB
+## 📁 Struktur Folder
 
-## 4. Setup Database
+```
+📦 crud/
+├── 📄 index.php                 # Halaman utama (daftar produk)
+├── 📄 detail.php                # Halaman detail produk
+├── 📄 db_init.php               # Script inisialisasi database
+├── 📄 database.sql              # Database schema & initial data
+│
+├── 🔐 auth/
+│   ├── login.php                # Halaman login
+│   ├── logout.php               # Proses logout
+│   ├── register.php             # Halaman pendaftaran
+│   └── loading.php              # Halaman loading/redirect
+│
+├── 👨‍💼 admin/
+│   ├── dashboard.php            # Dashboard admin
+│   ├── produk.php               # Manajemen produk
+│   ├── kategori.php             # Manajemen kategori
+│   ├── brand.php                # Manajemen brand
+│   ├── transaksi.php            # Manajemen transaksi
+│   ├── user.php                 # Manajemen pengguna
+│   └── profil.php               # Profil admin
+│
+├── 🎨 components/
+│   ├── header.php               # Header umum
+│   ├── footer.php               # Footer umum
+│   ├── admin_sidebar.php        # Sidebar admin
+│   └── toast.php                # Notifikasi toast
+│
+├── ⚙️ config/
+│   └── db.php                   # Konfigurasi database
+│
+├── 📦 assets/
+│   ├── 🎨 css/
+│   │   └── style.css            # Stylesheet utama
+│   └── 📜 js/
+│       └── app.js               # JavaScript frontend
+│
+├── 👤 user/
+│   ├── profil.php               # Halaman profil pengguna
+│   ├── detail_pesanan.php       # Detail pesanan
+│   ├── riwayat.php              # Riwayat pembelian
+│   └── beli.php                 # Proses pembelian
+│
+└── 📤 uploads/
+    └── produk/                  # Gambar produk
 
-1. Buat database baru di MySQL/MariaDB.
-2. Impor file `database.sql` ke database tersebut.
-3. Buka `config/db.php` dan sesuaikan pengaturan koneksi:
-   - `DB_HOST`
-   - `DB_NAME`
-   - `DB_USER`
-   - `DB_PASS`
+```
 
-## 5. Menjalankan Website
+---
 
-Dari folder root project, jalankan perintah berikut pada terminal:
+## ⚙️ Persyaratan
+
+Pastikan sistem Anda memenuhi persyaratan berikut:
+
+| Persyaratan | Versi | Status |
+|-------------|-------|--------|
+| 🐘 **PHP** | 7.4+ | ✅ |
+| 🗄️ **MySQL/MariaDB** | 5.7+ | ✅ |
+| 🌐 **Web Server** | Apache/Built-in | ✅ |
+
+> 💡 Tip: Gunakan built-in PHP server untuk pengembangan lokal
+
+---
+
+## 🗄️ Setup Database
+
+<div align="center">
+
+![Loading](https://media1.tenor.com/m/d7jsZ0yCYkoAAAAd/bronya-think-loading-gif.gif)
+
+</div>
+
+### Langkah-langkah Setup:
+
+**1️⃣ Buat Database Baru**
+```sql
+CREATE DATABASE nama_database;
+USE nama_database;
+```
+
+**2️⃣ Impor File SQL**
+```bash
+mysql -u root -p nama_database < database.sql
+```
+
+**3️⃣ Konfigurasi Koneksi Database**
+
+Edit file `config/db.php` dan sesuaikan:
+
+```php
+<?php
+define('DB_HOST', 'localhost');      // Host database
+define('DB_NAME', 'nama_database');  // Nama database
+define('DB_USER', 'root');           // Username
+define('DB_PASS', '');               // Password
+?>
+```
+
+---
+
+## 🚀 Menjalankan Website
+
+### Opsi 1: Built-in PHP Server (Recommended)
 
 ```bash
+# Dari folder root project
+cd crud/
 php -S localhost:8000
 ```
 
-Kemudian buka browser dan akses:
+### Opsi 2: Web Server (Apache/Nginx)
 
-- `http://localhost:8000/` untuk halaman utama
-- `http://localhost:8000/auth/login.php` untuk login
-- `http://localhost:8000/auth/register.php` untuk registrasi
+Tempatkan folder project di:
+- **XAMPP**: `htdocs/crud/`
+- **Nginx**: `/var/www/html/crud/`
 
-## 6. Cara Menggunakan
+---
 
-### Pengguna Biasa
-- Daftar akun di `auth/register.php`
-- Login di `auth/login.php`
-- Jelajahi produk di `index.php`
-- Buka detail produk via `detail.php`
-- Proses pembelian melalui `user/beli.php`
-- Lihat profil di `user/profil.php`
-- Lihat riwayat pesanan di `user/riwayat.php`
+### 📍 Akses Website
 
-### Admin
-- Login sebagai admin via `auth/login.php`
-- Akses panel admin di `admin/dashboard.php`
-- Kelola produk di `admin/produk.php`
-- Kelola kategori di `admin/kategori.php`
-- Kelola brand di `admin/brand.php`
-- Kelola transaksi di `admin/transaksi.php`
-- Kelola pengguna di `admin/user.php`
-- Ubah profil admin di `admin/profil.php`
+| Halaman | URL |
+|---------|-----|
+| 🏠 **Halaman Utama** | `http://localhost:8000/` |
+| 🔐 **Login** | `http://localhost:8000/auth/login.php` |
+| 📝 **Register** | `http://localhost:8000/auth/register.php` |
+| 👨‍💼 **Admin Panel** | `http://localhost:8000/admin/dashboard.php` |
 
-## 7. Catatan Tambahan
+---
 
-- Pastikan folder `uploads/produk/` dapat ditulis oleh server untuk menyimpan gambar produk.
-- Jika terjadi error koneksi database, periksa kembali konfigurasi di `config/db.php`.
-- Jika Anda menggunakan environment lain (misalnya XAMPP), tempatkan seluruh folder project di `htdocs` dan akses melalui `http://localhost/<nama-folder>/`.
+## 💡 Cara Menggunakan
 
+### 👥 Sebagai Pengguna Biasa
+
+```
+1. 📝 Daftar akun          → auth/register.php
+2. 🔐 Login                 → auth/login.php
+3. 🛍️ Jelajahi produk      → index.php
+4. 🔍 Lihat detail produk   → detail.php (klik produk)
+5. 🛒 Proses pembelian      → user/beli.php
+6. 👤 Lihat profil          → user/profil.php
+7. 📦 Riwayat pesanan       → user/riwayat.php
+```
+
+**Fitur Pengguna:**
+- ✅ Membuat akun baru
+- ✅ Memperbarui profil
+- ✅ Melihat daftar produk
+- ✅ Membeli produk
+- ✅ Melihat riwayat pesanan
+- ✅ Logout akun
+
+---
+
+### 👨‍💼 Sebagai Admin
+
+```
+1. 🔐 Login sebagai admin      → auth/login.php
+2. 📊 Akses panel admin        → admin/dashboard.php
+3. 📦 Kelola produk            → admin/produk.php
+4. 📂 Kelola kategori          → admin/kategori.php
+5. 🏷️ Kelola brand             → admin/brand.php
+6. 💳 Kelola transaksi         → admin/transaksi.php
+7. 👥 Kelola pengguna          → admin/user.php
+8. ⚙️ Edit profil admin         → admin/profil.php
+```
+
+**Fitur Admin:**
+- ✅ Create, Read, Update, Delete produk
+- ✅ Manajemen kategori & brand
+- ✅ Lihat & verifikasi transaksi
+- ✅ Manajemen pengguna
+- ✅ Update profil admin
+- ✅ Dashboard analytics
+
+---
+
+## 📝 Catatan Tambahan
+
+### ⚠️ Penting
+
+- 📤 Pastikan folder `uploads/produk/` **dapat ditulis** oleh web server
+- 🔒 Berikan permission: `chmod 755 uploads/produk/`
+- 🔧 Jika error koneksi database, periksa kembali `config/db.php`
+- 🌐 Untuk XAMPP: akses via `http://localhost/<nama-folder>/`
+
+### 🐛 Troubleshooting
+
+| Masalah | Solusi |
+|---------|--------|
+| ❌ Error koneksi database | Periksa `config/db.php` & pastikan MySQL running |
+| ❌ Gambar tidak terupload | Ubah permission folder `uploads/produk/` menjadi 755 |
+| ❌ Halaman blank | Cek PHP version, harus PHP 7.4+ |
+| ❌ Session error | Pastikan `session_start()` di file pertama |
+
+---
+
+## 🎨 Tech Stack
+
+```
+Frontend: HTML5 | CSS3 | JavaScript
+Backend:  PHP 7.4+
+Database: MySQL/MariaDB
+Server:   Apache / Built-in PHP Server
+```
+
+---
+
+## 📊 Statistik Repository
+
+![Code Composition](https://img.shields.io/badge/PHP-32.2%25-blue?style=flat-square)
+![Code Composition](https://img.shields.io/badge/Python-52.9%25-green?style=flat-square)
+![Code Composition](https://img.shields.io/badge/JavaScript-7.8%25-yellow?style=flat-square)
+![Code Composition](https://img.shields.io/badge/TypeScript-4.5%25-lightblue?style=flat-square)
+![Code Composition](https://img.shields.io/badge/HTML-2.3%25-orange?style=flat-square)
+
+---
+
+<div align="center">
+
+### 🎉 Selamat Menggunakan Aplikasi CRUD Kami!
+
+**Made with ❤️ for Ujian Akhir Semester**
+
+⭐ Jika project ini membantu, beri star ya! ⭐
+
+</div>
