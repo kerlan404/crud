@@ -263,8 +263,6 @@ Server:   Apache / Built-in PHP Server
 
 **Made with ❤️ for Ujian Akhir Semester**
 
-![Loading](https://media1.tenor.com/m/d7jsZ0yCYkoAAAAd/bronya-think-loading-gif.gif)
-
 ⭐ Jika project ini membantu, beri star ya! ⭐
 
 </div>
