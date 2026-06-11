@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![IShowSpeed Yeah](https://media1.tenor.com/m/J9WzCvxHZEsAAAAd/ishowspeed-ishowspeed-yeah-right.gif)
+![Loading](https://media1.tenor.com/m/d7jsZ0yCYkoAAAAd/bronya-think-loading-gif.gif)
 
 **Aplikasi CRUD Toko Online yang Sederhana dan Powerful** ✨
 
@@ -256,12 +256,6 @@ Server:   Apache / Built-in PHP Server
 ![Code Composition](https://img.shields.io/badge/HTML-2.3%25-orange?style=flat-square)
 
 ---
-<div align="center">
-
-![Loading](https://media1.tenor.com/m/d7jsZ0yCYkoAAAAd/bronya-think-loading-gif.gif)
-
-</div>
-
 
 <div align="center">
 
