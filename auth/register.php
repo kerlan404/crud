@@ -14,6 +14,9 @@ if (isset($_SESSION['user_id'])) {
 $error_msg = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Delay kecil agar overlay loading di client tampak sebentar
+    usleep(400000); // 0.4 detik
+
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
@@ -33,8 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $pdo->prepare("INSERT INTO users (username, email, password, role, status) VALUES (?, ?, ?, 'user', 'active')");
                     $stmt->execute([$username, $email, $hashed_password]);
 
-                    set_toast('success', 'Pendaftaran berhasil! Silakan masuk.');
-                    header('Location: login.php');
+                    $new_id = $pdo->lastInsertId();
+                    
+                    // AUTO LOGIN
+                    $_SESSION['user_id'] = $new_id;
+                    $_SESSION['username'] = $username;
+                    $_SESSION['email'] = $email;
+                    $_SESSION['role'] = 'user';
+
+                    set_toast('success', 'Registrasi sukses! Selamat datang, ' . $username . '!');
+                    header('Location: loading.php');
                     exit;
                 }
             } catch (PDOException $e) {
@@ -59,16 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 extend: {
                     colors: {
                         navy: {
-                            50: '#f0f4f8',
-                            400: '#334e68',
-                            500: '#003087',
+                            550: '#003087',
                             900: '#060f24',
                             950: '#030814',
                         },
                         zeta: {
                             500: '#CC0000',
                             600: '#990000',
-                            glow: 'rgba(204, 0, 0, 0.4)',
                         }
                     }
                 }
@@ -88,8 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: rgba(6, 15, 36, 0.7);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 
-                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
         .glow-input:focus {
             box-shadow: 0 0 15px rgba(0, 48, 135, 0.3);
@@ -101,16 +108,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background-size: cover;
             background-position: center;
         }
+        @keyframes spin-slow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+            animation: spin-slow 1.2s linear infinite;
+        }
     </style>
 </head>
 <body class="motor-bg min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
     
-    <!-- Dynamic Glowing Ambient Lights -->
-    <div class="absolute w-[600px] h-[600px] rounded-full bg-navy-500/10 -top-60 -left-60 blur-3xl pointer-events-none"></div>
+    <!-- Loading Screen (Tire Animation) -->
+    <div id="loading-overlay" class="fixed inset-0 z-50 bg-navy-950/90 backdrop-blur-md hidden flex flex-col items-center justify-center space-y-4">
+        <!-- Motorcycle Tire/Wheel Spinning SVG -->
+        <div class="relative w-20 h-20 flex items-center justify-center">
+            <!-- Tire Outer border -->
+            <div class="absolute inset-0 rounded-full border-[6px] border-dashed border-slate-700 animate-spin-slow"></div>
+            <!-- Tire Inner Wheel Rim -->
+            <svg class="w-16 h-16 text-zeta-500 animate-spin-slow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="8"></circle>
+                <circle cx="12" cy="12" r="2" fill="currentColor"></circle>
+                <line x1="12" y1="4" x2="12" y2="20"></line>
+                <line x1="4" y1="12" x2="20" y2="12"></line>
+                <line x1="6.34" y1="6.34" x2="17.66" y2="17.66"></line>
+                <line x1="6.34" y1="17.66" x2="17.66" y2="6.34"></line>
+            </svg>
+        </div>
+        <p class="text-white text-xs font-bold tracking-widest uppercase animate-pulse">Membuat Akun Zeta Anda...</p>
+    </div>
+
+    <!-- Glowing Background Lights -->
+    <div class="absolute w-[600px] h-[600px] rounded-full bg-navy-550/10 -top-60 -left-60 blur-3xl pointer-events-none"></div>
     <div class="absolute w-[600px] h-[600px] rounded-full bg-zeta-500/10 -bottom-60 -right-60 blur-3xl pointer-events-none"></div>
 
-    <div class="w-full max-w-[440px] glass-container rounded-2xl p-8 relative z-10 animate-slideup">
-        <!-- Logo and Heading -->
+    <div class="w-full max-w-[440px] glass-container rounded-2xl p-8 relative z-10">
         <div class="text-center mb-8">
             <a href="../index.php" class="inline-block group mb-3">
                 <span class="text-3xl font-black tracking-widest text-white brand-title">
@@ -127,30 +159,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         <?php endif; ?>
 
-        <!-- Form -->
-        <form action="register.php" method="POST" class="space-y-4 font-normal">
+        <form action="register.php" method="POST" id="register-form" class="space-y-4">
             <div class="space-y-1.5">
                 <label for="username" class="block text-[10px] font-bold tracking-widest text-slate-400 uppercase">Nama Lengkap</label>
                 <input type="text" name="username" id="username" required placeholder="Ahmad Zaki"
-                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-500 focus:border-navy-500 glow-input transition duration-200 text-sm">
+                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-550 focus:border-navy-550 glow-input transition duration-200 text-sm">
             </div>
 
             <div class="space-y-1.5">
                 <label for="email" class="block text-[10px] font-bold tracking-widest text-slate-400 uppercase">Alamat Email</label>
                 <input type="email" name="email" id="email" required placeholder="name@domain.com"
-                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-500 focus:border-navy-500 glow-input transition duration-200 text-sm">
+                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-550 focus:border-navy-550 glow-input transition duration-200 text-sm">
             </div>
 
             <div class="space-y-1.5">
                 <label for="password" class="block text-[10px] font-bold tracking-widest text-slate-400 uppercase">Kata Sandi</label>
                 <input type="password" name="password" id="password" required placeholder="••••••••"
-                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-500 focus:border-navy-500 glow-input transition duration-200 text-sm">
+                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-550 focus:border-navy-550 glow-input transition duration-200 text-sm">
             </div>
 
             <div class="space-y-1.5">
                 <label for="confirm_password" class="block text-[10px] font-bold tracking-widest text-slate-400 uppercase">Konfirmasi Kata Sandi</label>
                 <input type="password" name="confirm_password" id="confirm_password" required placeholder="••••••••"
-                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-500 focus:border-navy-500 glow-input transition duration-200 text-sm">
+                    class="w-full px-4 py-2.5 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-550 focus:border-navy-500 glow-input transition duration-200 text-sm">
             </div>
 
             <button type="submit" 
@@ -159,10 +190,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
         </form>
 
-        <!-- Redirect options -->
         <div class="mt-6 pt-4 border-t border-slate-800 text-center text-xs text-slate-400">
             Sudah terdaftar? <a href="login.php" class="text-zeta-500 font-bold hover:text-white transition duration-200">Masuk di Sini</a>
         </div>
     </div>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', function() {
+            document.getElementById('loading-overlay').classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>

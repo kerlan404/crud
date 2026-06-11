@@ -166,6 +166,8 @@ $products = $pdo->query("SELECT p.*, k.nama_kategori, b.nama_brand
         }
     </script>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex">
 
@@ -240,10 +242,12 @@ $products = $pdo->query("SELECT p.*, k.nama_kategori, b.nama_brand
                                                 class="px-2.5 py-1 bg-slate-100 hover:bg-navy-500 hover:text-white rounded text-[10px] font-bold tracking-wider uppercase transition">
                                                 EDIT
                                             </button>
-                                            <form action="produk.php" method="POST" onsubmit="return confirm('Hapus produk ini?');" class="inline">
+                                            <form action="produk.php" method="POST" id="form-del-<?= htmlspecialchars($prod['kode_produk']) ?>" class="inline">
                                                 <input type="hidden" name="action" value="delete">
                                                 <input type="hidden" name="kode_produk" value="<?= htmlspecialchars($prod['kode_produk']) ?>">
-                                                <button type="submit" class="px-2.5 py-1 bg-slate-100 hover:bg-rose-600 hover:text-white rounded text-[10px] font-bold tracking-wider uppercase transition">
+                                                <button type="button"
+                                                    onclick="confirmDelete('<?= htmlspecialchars($prod['kode_produk'], ENT_QUOTES) ?>', '<?= htmlspecialchars($prod['nama_produk'], ENT_QUOTES) ?>')"
+                                                    class="px-2.5 py-1 bg-slate-100 hover:bg-rose-600 hover:text-white rounded text-[10px] font-bold tracking-wider uppercase transition">
                                                     HAPUS
                                                 </button>
                                             </form>
@@ -341,7 +345,90 @@ $products = $pdo->query("SELECT p.*, k.nama_kategori, b.nama_brand
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // ── SweetAlert2 Delete Confirmation ──
+        function confirmDelete(kode, nama) {
+            Swal.fire({
+                title: 'Hapus Produk?',
+                html: `Anda akan menghapus produk:<br><strong style="color:#CC0000;font-size:1.05em;letter-spacing:.04em">${nama}</strong><br><code style="background:#f1f5f9;padding:2px 8px;border-radius:4px;font-size:.8em">${kode}</code><br><br><span style="color:#64748b;font-size:.8em">Aksi ini tidak dapat dibatalkan dan gambar produk akan ikut terhapus.</span>`,
+                icon: 'warning',
+                iconColor: '#CC0000',
+                showCancelButton: true,
+                confirmButtonText: '🗑️ Ya, Hapus Sekarang',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#CC0000',
+                cancelButtonColor: '#64748b',
+                focusCancel: true,
+                reverseButtons: true,
+                backdrop: 'rgba(3,8,20,0.7)',
+                customClass: {
+                    popup:          'swal-zeta-popup',
+                    title:          'swal-zeta-title',
+                    htmlContainer:  'swal-zeta-html',
+                    confirmButton:  'swal-zeta-confirm',
+                    cancelButton:   'swal-zeta-cancel',
+                },
+                showClass: {
+                    popup: 'animate__animated animate__fadeInDown animate__faster'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutUp animate__faster'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Tampilkan loading saat memproses
+                    Swal.fire({
+                        title: 'Menghapus...',
+                        text: 'Mohon tunggu sebentar.',
+                        icon: 'info',
+                        iconColor: '#003087',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                        showConfirmButton: false,
+                        backdrop: 'rgba(3,8,20,0.7)',
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+                    document.getElementById('form-del-' + kode).submit();
+                }
+            });
+        }
+
+        // ── Inline custom style untuk popup Zeta ──
+        const swalStyle = document.createElement('style');
+        swalStyle.textContent = `
+            .swal-zeta-popup {
+                border-radius: 14px !important;
+                font-family: 'Plus Jakarta Sans', sans-serif !important;
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: 0 25px 60px rgba(0,0,0,.15) !important;
+            }
+            .swal-zeta-title {
+                font-family: 'Outfit', sans-serif !important;
+                font-weight: 900 !important;
+                font-size: 1.4rem !important;
+                letter-spacing: .05em !important;
+                text-transform: uppercase !important;
+            }
+            .swal-zeta-html {
+                font-size: .85rem !important;
+                line-height: 1.8 !important;
+            }
+            .swal-zeta-confirm, .swal-zeta-cancel {
+                font-family: 'Outfit', sans-serif !important;
+                font-weight: 700 !important;
+                letter-spacing: .08em !important;
+                text-transform: uppercase !important;
+                font-size: .72rem !important;
+                border-radius: 8px !important;
+                padding: 10px 22px !important;
+            }
+            .swal-zeta-confirm:focus, .swal-zeta-cancel:focus {
+                box-shadow: none !important;
+            }
+        `;
+        document.head.appendChild(swalStyle);
+
         const modal = document.getElementById('product-modal');
 
         function openCreateModal() {

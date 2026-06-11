@@ -38,11 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     set_toast('success', 'Selamat datang kembali, ' . $user['username'] . '!');
                     
-                    if ($user['role'] === 'admin') {
-                        header('Location: ../admin/dashboard.php');
-                    } else {
-                        header('Location: ../index.php');
-                    }
+                    // Redirect ke loading page (animasi ban/perisai)
+                    header('Location: loading.php');
                     exit;
                 }
             } else {
@@ -154,11 +151,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     class="w-full px-4 py-3 bg-slate-900/60 border border-slate-700/60 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-navy-500 focus:border-navy-500 glow-input transition duration-200 text-sm">
             </div>
 
-            <button type="submit" 
-                class="w-full py-3.5 bg-zeta-500 hover:bg-zeta-600 text-white font-bold tracking-widest text-xs uppercase rounded-lg shadow-lg hover:shadow-zeta-500/20 active:translate-y-px transition-all duration-200">
-                Otorisasi Masuk
+            <button type="submit" id="btn-login"
+                class="w-full py-3.5 bg-zeta-500 hover:bg-zeta-600 text-white font-bold tracking-widest text-xs uppercase rounded-lg shadow-lg hover:shadow-zeta-500/20 active:translate-y-px transition-all duration-200 flex items-center justify-center gap-2">
+                <span id="btn-text">Otorisasi Masuk</span>
+                <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg>
             </button>
         </form>
+
+        <script>
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('btn-text').textContent = 'Memverifikasi...';
+            document.getElementById('btn-spinner').classList.remove('hidden');
+            document.getElementById('btn-login').disabled = true;
+            document.getElementById('btn-login').classList.add('opacity-70', 'cursor-not-allowed');
+        });
+        </script>
 
         <!-- Redirect options -->
         <div class="mt-8 pt-6 border-t border-slate-800 text-center text-xs text-slate-400">
